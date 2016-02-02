@@ -5,6 +5,7 @@ from nltk.corpus import reuters
 from nltk.corpus import stopwords
 
 ## 1 - EXERCISES ##
+print("----QUESTION 1----")
 # 8 #
 initials = nltk.ConditionalFreqDist(
     (fileid, name[0])
@@ -46,12 +47,33 @@ frequent_bigrams = nltk.FreqDist(b for b
 print ("\n50 most common bigrams in Reuters Corpus' third document: "
        + str(frequent_bigrams.most_common(50)))
 
-# First document in reuters corpus
-document = reuters.fileids()[0]
+
+## 2 - TF-IDF ##
+print ("\n\n----QUESTION 2----")
+# get the words of the first document in reuters corpus
+document = reuters.words(reuters.fileids()[0])
+# list of punctuation for elimination
+punctuation = ['`', '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
+               '-', '_', '=', '+', '[', ']', '{', '}', '\\', ';', ':', '\'',
+               '\"', ',', '.', '<', '>', '/', '?', '', ' ']
+
+#get rid of unwanted text from document
+cleandoc = [w for w in document
+            if w.lower() not in stopwords.words('english')
+            and set(w).isdisjoint(punctuation)]
 
 # Generate unigrams
-unigrams = nltk.ConditionalFreqDist(
-    (document, word)
-    for word in reuters.words(document)
-        if word not in stopwords.words('english'))
-print unigrams[document].most_common(20)
+unigrams = nltk.FreqDist(
+    word for word in cleandoc)
+print ("\n10 most common unigrams in Reuters Corpus' first document: "
+       + str(unigrams.most_common(10)))
+# Generate bigrams
+bigrams = nltk.FreqDist(
+    bg for bg in nltk.bigrams(cleandoc))
+print ("\n10 most common bigrams in Reuters Corpus' first document: "
+       + str(bigrams.most_common(10)))
+# Generate trigrams
+trigrams = nltk.FreqDist(
+    tg for tg in nltk.trigrams(cleandoc))
+print ("\n10 most common trigrams in Reuters Corpus' first document: "
+       + str(trigrams.most_common(10)))
